@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discord Community Support
+    url: https://discord.gg/7vaHhewmtJ
+    about: Ask questions, get real-time support, and showcase projects built with Chic Builder.
+  - name: 🌐 Chic Builder Web Studio
+    url: https://chic-builder.vercel.app/
+    about: Launch and deploy interactive web applications directly in the browser.

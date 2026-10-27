@@ -1,0 +1,105 @@
+name: Chic Builder Community AI Bot
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  auto-assign-and-triage:
+    name: Auto-assign, Label & Welcome
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-assign Issue to Lead Maintainer
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const author = context.payload.issue.user.login;
+
+            // Auto-assign issue to Kukzze
+            try {
+              await github.rest.issues.addAssignees({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                assignees: ['Kukzze']
+              });
+            } catch (err) {
+              console.log('Assignee error:', err.message);
+            }
+
+            // Add triage and community labels
+            try {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                labels: ['triage', 'community']
+              });
+            } catch (err) {
+              console.log('Labels error:', err.message);
+            }
+
+            // Post welcoming AI assistant response
+            const commentBody = `👋 **Hi @${author}! Welcome to [Chic Builder](https://chic-builder.vercel.app/)!**\n\n` +
+              `Thank you for opening this issue. Your submission has been logged, tagged for \`triage\`, and auto-assigned to lead architect @Kukzze for evaluation.\n\n` +
+              `### ⚡ Quick Community & Project Links:\n` +
+              `- 🌐 **Visual Web Studio**: [chic-builder.vercel.app](https://chic-builder.vercel.app/)\n` +
+              `- 💬 **Discord Server**: [Join our Discord](https://discord.gg/7vaHhewmtJ) for real-time discussions, builder showcases, and support\n` +
+              `- 🛡️ **mongo-next-sentinel**: Check out our open-source serverless MongoDB connection pool auditor\n\n` +
+              `> *If this is a bug report or component request, please ensure any relevant screenshots, browser versions, or layout configs are attached above.*\n\n` +
+              `— *Chic Builder Community Bot 🤖*`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: commentBody
+            });
+
+      - name: Welcome Pull Request Contributor
+        if: github.event_name == 'pull_request_target'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const author = context.payload.pull_request.user.login;
+
+            // Add triage and PR labels
+            try {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: prNumber,
+                labels: ['triage', 'pull-request']
+              });
+            } catch (err) {
+              console.log('Labels error:', err.message);
+            }
+
+            const commentBody = `🚀 **Thank you for contributing to Chic Builder, @${author}!**\n\n` +
+              `We appreciate your pull request. Our automated CI workflows are currently validating your branch.\n\n` +
+              `### 📋 Contributor Pre-Flight Checklist:\n` +
+              `- [ ] Branch is synced with \`main\`\n` +
+              `- [ ] All automated CI checks pass without errors\n` +
+              `- [ ] Code adheres to TypeScript & Tailwind styling guidelines\n\n` +
+              `Lead architect @Kukzze will review your pull request shortly. Happy building!\n\n` +
+              `— *Chic Builder Automation ⚡*`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body: commentBody
+            });

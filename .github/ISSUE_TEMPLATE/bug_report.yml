@@ -1,0 +1,35 @@
+name: 🐛 Bug Report
+description: Report a rendering issue, canvas bug, or styling defect in Chic Builder
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue in Chic Builder!
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the error or unexpected behavior is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Open Chic Builder canvas
+        2. Drag component '...'
+        3. Switch viewport to '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened instead.
+    validations:
+      required: true
